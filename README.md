@@ -20,7 +20,8 @@ CREATE TABLE cms.pages (
 );
 ```
 
-Edit `backend/config.php` to match your database credentials.
+Alternatively run `install.php` in your browser and follow the form to create
+the database and configuration automatically.
 
 ## Running
 
