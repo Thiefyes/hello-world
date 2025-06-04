@@ -3,8 +3,10 @@ class App extends React.Component {
     pages: [],
     title: '',
     content: '',
+    slug: '',
     editingId: null,
     loggedIn: false,
+    users: [],
     username: '',
     password: ''
   };
@@ -14,7 +16,10 @@ class App extends React.Component {
       .then(res => res.json())
       .then(res => {
         if (res.logged_in) {
-          this.setState({ loggedIn: true }, this.loadPages);
+          this.setState({ loggedIn: true }, () => {
+            this.loadPages();
+            this.loadUsers();
+          });
         }
       });
   }
@@ -23,6 +28,12 @@ class App extends React.Component {
     fetch('../backend/api.php')
       .then(res => res.json())
       .then(pages => this.setState({ pages }));
+  };
+
+  loadUsers = () => {
+    fetch('../backend/users.php')
+      .then(res => res.json())
+      .then(users => this.setState({ users }));
   };
 
   login = () => {
@@ -88,7 +99,19 @@ class App extends React.Component {
         <input
           placeholder="Title"
           value={this.state.title}
-          onChange={e => this.setState({ title: e.target.value })}
+          onChange={e => {
+            const title = e.target.value;
+            this.setState({ title });
+            fetch(`../backend/seo.php?title=${encodeURIComponent(title)}`)
+              .then(res => res.json())
+              .then(data => this.setState({ slug: data.slug }));
+          }}
+        />
+        <br />
+        <input
+          placeholder="Slug"
+          value={this.state.slug}
+          readOnly
         />
         <br />
         <textarea
@@ -107,6 +130,12 @@ class App extends React.Component {
             <button onClick={() => this.deletePage(page.id)}>Delete</button>
           </div>
         ))}
+        <h2>Users</h2>
+        <ul>
+          {this.state.users.map(u => (
+            <li key={u.username}>{u.username}</li>
+          ))}
+        </ul>
       </div>
     );
   }
