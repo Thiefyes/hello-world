@@ -1,12 +1,42 @@
 class App extends React.Component {
-  state = { pages: [], title: '', content: '', editingId: null };
+  state = {
+    pages: [],
+    title: '',
+    content: '',
+    editingId: null,
+    loggedIn: false,
+    username: '',
+    password: ''
+  };
 
-  componentDidMount() { this.loadPages(); }
+  componentDidMount() {
+    fetch('../backend/login.php')
+      .then(res => res.json())
+      .then(res => {
+        if (res.logged_in) {
+          this.setState({ loggedIn: true }, this.loadPages);
+        }
+      });
+  }
 
   loadPages = () => {
     fetch('../backend/api.php')
       .then(res => res.json())
       .then(pages => this.setState({ pages }));
+  };
+
+  login = () => {
+    fetch('../backend/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: this.state.username, password: this.state.password })
+    }).then(res => {
+      if (res.ok) {
+        this.setState({ loggedIn: true }, this.loadPages);
+      } else {
+        alert('Login failed');
+      }
+    });
   };
 
   savePage = () => {
@@ -31,6 +61,27 @@ class App extends React.Component {
   };
 
   render() {
+    if (!this.state.loggedIn) {
+      return (
+        <div>
+          <h1>Login</h1>
+          <input
+            placeholder="Username"
+            value={this.state.username}
+            onChange={e => this.setState({ username: e.target.value })}
+          />
+          <br />
+          <input
+            type="password"
+            placeholder="Password"
+            value={this.state.password}
+            onChange={e => this.setState({ password: e.target.value })}
+          />
+          <br />
+          <button onClick={this.login}>Login</button>
+        </div>
+      );
+    }
     return (
       <div>
         <h1>CMS Admin</h1>
