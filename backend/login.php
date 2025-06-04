@@ -3,12 +3,13 @@ session_start();
 header('Content-Type: application/json');
 
 $config = include __DIR__ . '/config.php';
-$adminUser = $config['admin_user'] ?? 'admin';
-$adminPass = $config['admin_password'] ?? 'password';
+require __DIR__ . '/services/AuthService.php';
+
+$auth = new AuthService($config);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
-    if (($data['username'] ?? '') === $adminUser && ($data['password'] ?? '') === $adminPass) {
+    if ($auth->checkCredentials($data['username'] ?? '', $data['password'] ?? '')) {
         $_SESSION['logged_in'] = true;
         echo json_encode(['success' => true]);
     } else {
