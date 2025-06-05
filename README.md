@@ -1,11 +1,11 @@
 # Simple CMS Admin Panel
 
-This repository provides a minimal example of a website builder using a PHP backend with a React frontend and MySQL storage. The backend is split into small services for easier extension.
+This repository now ships with a Laravel backend. A legacy plain PHP implementation is still available in the `backend/` directory, but new development happens inside the `laravel/` folder. The React admin remains unchanged and communicates with the Laravel API.
 
 ## Structure
 
-- `backend/` – PHP services and API endpoints
-- `backend/services/` – individual service classes (pages, auth, SEO, etc.)
+- `laravel/` – Laravel application providing the API
+- `backend/` – legacy plain PHP API (no longer maintained)
 - `public/admin/` – React application available under `/admin`
 
 ## Database
@@ -30,7 +30,7 @@ Alternatively run `install.php` in your browser and follow the form to create th
 
 ## Running
 
-Serve the repository with a web server that supports PHP. The React admin is accessible at `/admin` and communicates with the PHP API in `backend/`.
+Inside `laravel/` run `php artisan migrate` once to create the SQLite database. Afterwards start the server with `php artisan serve --host=127.0.0.1 --port=8000`. The React admin is accessible at `/admin` and now communicates with the Laravel API under `/api/pages`.
 
 ## Installing on Shared Hosting
 
