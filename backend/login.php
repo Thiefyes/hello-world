@@ -3,9 +3,10 @@ session_start();
 header('Content-Type: application/json');
 
 $config = include __DIR__ . '/config.php';
+require __DIR__ . '/db.php';
 require __DIR__ . '/services/AuthService.php';
 
-$auth = new AuthService($config);
+$auth = new AuthService($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);

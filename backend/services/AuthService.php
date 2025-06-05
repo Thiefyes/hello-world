@@ -1,14 +1,15 @@
 <?php
 class AuthService {
-    private string $adminUser;
-    private string $adminPass;
+    private PDO $pdo;
 
-    public function __construct(array $config) {
-        $this->adminUser = $config['admin_user'] ?? 'admin';
-        $this->adminPass = $config['admin_password'] ?? 'password';
+    public function __construct(PDO $pdo) {
+        $this->pdo = $pdo;
     }
 
     public function checkCredentials(string $username, string $password): bool {
-        return $username === $this->adminUser && $password === $this->adminPass;
+        $stmt = $this->pdo->prepare('SELECT password_hash FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        $row = $stmt->fetch();
+        return $row && password_verify($password, $row['password_hash']);
     }
 }
