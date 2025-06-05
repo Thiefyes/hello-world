@@ -19,6 +19,11 @@ CREATE TABLE cms.pages (
   title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL
 );
+CREATE TABLE cms.users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL
+);
 ```
 
 Alternatively run `install.php` in your browser and follow the form to create the database and configuration automatically.
@@ -40,12 +45,12 @@ Follow these steps to deploy the CMS on any typical PHP hosting service:
    - Upload all files to the document root of your website (for example `public_html/`).
 
 3. **Configure the CMS**
-   - Edit `backend/config.php` and fill in the database credentials you created above. You can also set the desired admin username and password in this file.
-   - If you prefer to use the web installer instead, remove `backend/config.php` before uploading and navigate to `install.php` after the upload. The installer will ask for the database settings and create the configuration file for you.
+   - Edit `backend/config.php` and fill in the database credentials you created above.
+   - If you prefer to use the web installer instead, remove `backend/config.php` before uploading and navigate to `install.php` after the upload. The installer will ask for the database settings, create the necessary tables and let you set up an administrator account.
 
-4. **Create the database table**
+4. **Create the database tables**
    - If you used the installer, this step is handled automatically.
-   - Otherwise execute the SQL snippet from the *Database* section on your new database to create the `pages` table.
+   - Otherwise execute the SQL snippet from the *Database* section on your new database to create the `pages` and `users` tables.
 
 5. **Finalize**
    - After installation, remove `install.php` from the server for security.

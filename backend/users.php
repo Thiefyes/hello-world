@@ -1,9 +1,8 @@
 <?php
 header('Content-Type: application/json');
-$config = include __DIR__ . '/config.php';
+require __DIR__ . '/db.php';
 
-$users = [
-    ['username' => $config['admin_user']]
-];
+$stmt = $pdo->query('SELECT username FROM users ORDER BY id');
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode($users);

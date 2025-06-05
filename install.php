@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'dbname' => $dbname,
         'user' => $user,
         'password' => $password,
-        'admin_user' => $adminUser,
-        'admin_password' => $adminPass,
     ];
 
     try {
@@ -30,8 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname`");
         $pdo->exec("USE `$dbname`");
         $pdo->exec("CREATE TABLE IF NOT EXISTS pages (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, content TEXT NOT NULL)");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL)");
+
+        $hash = password_hash($adminPass, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)');
+        $stmt->execute([$adminUser, $hash]);
+
         file_put_contents(__DIR__ . '/backend/config.php', "<?php\nreturn " . var_export($config, true) . ";\n");
-        echo 'Installation successful. Please delete install.php.';
+        echo 'Installation successful. Admin account created. Please delete install.php.';
         exit;
     } catch (PDOException $e) {
         $error = $e->getMessage();
